@@ -1704,6 +1704,11 @@ class TestSoupSelector(TreeTest):
         # Try to select (non-existent!) fourth paragraph
         els = self.soup.select('div#inner p:nth-of-type(4)')
         self.assertEqual(len(els), 0)
+        
+    def test_nth_of_type_direct_descendant(self):
+        els = self.soup.select('div#inner > p:nth-of-type(1)')
+        self.assertEqual(len(els), 1)
+        self.assertEqual(els[0].string, u'Some text')
 
     def test_select_on_element(self):
         # Other tests operate on the tree; this operates on an element

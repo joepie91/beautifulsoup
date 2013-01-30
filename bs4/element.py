@@ -539,7 +539,7 @@ class PageElement(object):
         else:
             return lambda el: el.has_attr(attribute)
 
-    def select(self, selector):
+    def select(self, selector, recursive=True):
         """Perform a CSS selection operation on the current element."""
         tokens = selector.split()
         current_context = [self]
@@ -558,7 +558,7 @@ class PageElement(object):
                 found = []
                 for context in current_context:
                     found.extend(
-                        [el for el in context.find_all(tag) if checker(el)])
+                        [el for el in context.find_all(tag, recursive=recursive) if checker(el)])
                 current_context = found
                 continue
             
@@ -587,7 +587,7 @@ class PageElement(object):
                         return False
                     return classes.issubset(tag['class'])
                 for context in current_context:
-                    found.extend(context.find_all(classes_match))
+                    found.extend(context.find_all(classes_match, recursive=recursive))
                 current_context = found
                 continue
             
@@ -609,7 +609,7 @@ class PageElement(object):
                             raise Exception('nth-of-type pseudoselector value must be at least 1.')
                         pseudo_value = pseudo_value - 1
                         for context in current_context:
-                            all_nodes = context.findAll(tag_name)
+                            all_nodes = context.find_all(tag_name, recursive=recursive)
                             if pseudo_value < len(all_nodes):
                                 found.extend(all_nodes[pseudo_value])
                         current_context = found
@@ -621,7 +621,7 @@ class PageElement(object):
                 # Star selector
                 found = []
                 for context in current_context:
-                    found.extend(context.findAll(True))
+                    found.extend(context.find_all(True, recursive=recursive))
                 current_context = found
                 continue
 
@@ -633,7 +633,7 @@ class PageElement(object):
 
                 found = []
                 for context in current_context:
-                    found.extend(context.find_all(tag, recursive=False))
+                    found.extend(context.select(tag, recursive=False))
                 current_context = found
                 continue
 
@@ -642,7 +642,7 @@ class PageElement(object):
                 return []
             found = []
             for context in current_context:
-                found.extend(context.findAll(token))
+                found.extend(context.find_all(token, recursive=recursive))
             current_context = found
         return current_context
 
