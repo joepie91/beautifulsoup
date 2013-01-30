@@ -1689,6 +1689,21 @@ class TestSoupSelector(TreeTest):
             ('[blah]', []),
             ('p[blah]', []),
         )
+        
+    def test_nth_of_type(self):
+        # Try to select first paragraph
+        els = self.soup.select('div#inner p:nth-of-type(1)')
+        self.assertEqual(len(els), 1)
+        self.assertEqual(els[0].string, u'Some text')
+        
+        # Try to select third paragraph
+        els = self.soup.select('div#inner p:nth-of-type(3)')
+        self.assertEqual(len(els), 1)
+        self.assertEqual(els[0].string, u'Another')
+        
+        # Try to select (non-existent!) fourth paragraph
+        els = self.soup.select('div#inner p:nth-of-type(4)')
+        self.assertEqual(len(els), 0)
 
     def test_select_on_element(self):
         # Other tests operate on the tree; this operates on an element

@@ -561,7 +561,7 @@ class PageElement(object):
                         [el for el in context.find_all(tag) if checker(el)])
                 current_context = found
                 continue
-
+            
             if '#' in token:
                 # ID selector
                 tag, id = token.split('#', 1)
@@ -590,6 +590,32 @@ class PageElement(object):
                     found.extend(context.find_all(classes_match))
                 current_context = found
                 continue
+            
+            if ':' in token:
+                # Pseudoselector
+                tag_name, pseudo = token.split(':', 1)
+                if not tag_name:
+                    raise Exception("Pseudoselectors must be prefixed by a tag name.")
+                pseudo_attributes = re.match('([a-zA-Z\d-]+)\(([a-zA-Z\d]+)\)', pseudo)
+                found = []
+                if pseudo_attributes is not None:
+                    pseudo_type, pseudo_value = pseudo_attributes.groups()
+                    if pseudo_type == 'nth-of-type':
+                        try:
+                            pseudo_value = int(pseudo_value)
+                        except: 
+                            raise Exception('Only numeric values are supported for the nth-of-type pseudoselector for now.')
+                        if pseudo_value < 1:
+                            raise Exception('nth-of-type pseudoselector value must be at least 1.')
+                        pseudo_value = pseudo_value - 1
+                        for context in current_context:
+                            all_nodes = context.findAll(tag_name)
+                            if pseudo_value < len(all_nodes):
+                                found.extend(all_nodes[pseudo_value])
+                        current_context = found
+                        continue
+                    else:
+                        raise Exception('Only the nth-of-type pseudoselector is supported for now.')
 
             if token == '*':
                 # Star selector
