@@ -611,7 +611,7 @@ class PageElement(object):
                         for context in current_context:
                             all_nodes = context.find_all(tag_name, recursive=recursive)
                             if pseudo_value < len(all_nodes):
-                                found.extend(all_nodes[pseudo_value])
+                                found.extend([all_nodes[pseudo_value]])
                         current_context = found
                         continue
                     else:
@@ -624,7 +624,7 @@ class PageElement(object):
                     found.extend(context.find_all(True, recursive=recursive))
                 current_context = found
                 continue
-
+            
             if token == '>':
                 # Child selector
                 tag = tokens[index + 1]
@@ -636,7 +636,7 @@ class PageElement(object):
                     found.extend(context.select(tag, recursive=False))
                 current_context = found
                 continue
-
+            
             # Here we should just have a regular tag
             if not self.tag_name_re.match(token):
                 return []

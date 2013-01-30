@@ -1583,6 +1583,9 @@ class TestSoupSelector(TreeTest):
     def test_child_selector(self):
         self.assertSelects('.s1 > a', ['s1a1', 's1a2'])
         self.assertSelects('.s1 > a span', ['s1a2s1'])
+        
+    def test_child_selector_id(self):
+        self.assertSelects('.s1 > a#s1a2 span', ['s1a2s1'])
 
     def test_attribute_equals(self):
         self.assertSelectMultiple(
@@ -1709,6 +1712,9 @@ class TestSoupSelector(TreeTest):
         els = self.soup.select('div#inner > p:nth-of-type(1)')
         self.assertEqual(len(els), 1)
         self.assertEqual(els[0].string, u'Some text')
+
+    def test_id_child_selector_nth_of_type(self):
+        self.assertSelects('#inner > p:nth-of-type(2)', ['p1'])
 
     def test_select_on_element(self):
         # Other tests operate on the tree; this operates on an element
